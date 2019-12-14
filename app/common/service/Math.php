@@ -1,4 +1,11 @@
 <?php
+/**
+ * Created by Xiami.
+ * User: beinianxiaoyao@163.com
+ * Desc: 数学类
+ * Date: 2019/11/04 0014
+ * Time: 08:31
+ */
 namespace app\common\service;
 
 class Math{

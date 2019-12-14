@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Created by Xiami.
+ * User: beinianxiaoyao@163.com
+ * Desc: 时间日期类
+ * Date: 2019/12/14 0014
+ * Time: 17:32
+ */
 namespace app\common\service;
 
 class Date{
