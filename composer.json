@@ -21,7 +21,8 @@
         "topthink/think-orm": "^2.0",
         "topthink/think-queue": "^3.0",
         "topthink/think-multi-app": "^1.0",
-        "php-ai/php-ml": "^0.8.0"
+        "php-ai/php-ml": "^0.8.0",
+        "php-ffmpeg/php-ffmpeg": "v1.x-dev"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",
