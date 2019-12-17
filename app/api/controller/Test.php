@@ -20,13 +20,14 @@ class Test{
         dump($math->powerRoot(5,2));
     }
     public function image(Image $image){
-
+        dump($image->test('thumb.png','watermark.png','bar.png'));
     }
     public function video(Video $video){
         $video_arr=[
            ROOT_PATH.'/uploads/video/001.mp4',
            ROOT_PATH.'/uploads/video/002.mp4',
         ];
+        $video->thumb($video_arr[0],'thumb.png',2);
         $video->transcode($video_arr[0],'new-mp41','wmv',240,480);
 //        dump($video->contactVideo($video_arr,ROOT_PATH.'/new.m3u8'));
     }
