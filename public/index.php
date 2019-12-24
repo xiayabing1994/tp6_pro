@@ -11,9 +11,8 @@
 
 // [ 应用入口文件 ]
 namespace think;
-const ROOT_PATH=__DIR__;
 require __DIR__ . '/../vendor/autoload.php';
-
+define('ROOT_PATH',__DIR__);
 // 执行HTTP应用并响应
 $http = (new App())->http;
 

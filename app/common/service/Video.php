@@ -30,11 +30,14 @@ class Video{
         $video = $this->handler->open($video_arr[0]);
         //拼接视频
         $video->concat($video_arr)->saveFromSameCodecs('new.mp4', TRUE);
+        //转化音频
+        $audio_format = new \FFMpeg\Format\Audio\Mp3();
+        $video->save($audio_format, 'audio.mp3');
         //提取图片或封面
         $frame = $video->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds(2))->save('image.jpg');
         //调整视频大小
         $video->filters()
-            ->resize(new \FFMpeg\Coordinate\Dimension(200,400), \FFMpeg\Filters\Video\ResizeFilter::RESIZEMODE_FIT, true);
+            ->resize(new \FFMpeg\Coordinate\Dimension(200,400), \FFMpeg\Filters\Video\ResizeFilter::RESIZEMODE_FIT, true)
             ->save(new \FFMpeg\Format\Video\X264('libfdk_aac'), '/mnt/hgfs/www/test/v1080_new.mp4');
         //添加视频水印
         $watermarkPath = '/mnt/hgfs/www/test/water.png';

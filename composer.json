@@ -24,7 +24,8 @@
         "php-ai/php-ml": "^0.8.0",
         "php-ffmpeg/php-ffmpeg": "v1.x-dev",
         "intervention/image": "^2.5",
-        "guzzlehttp/psr7": "^1.6"
+        "guzzlehttp/psr7": "^1.6",
+        "cboden/ratchet": "^0.4.1"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",
