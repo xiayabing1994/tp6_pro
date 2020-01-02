@@ -40,9 +40,9 @@ class Video{
     }
 
     /**
-     * 拼接视频(暂不可用)
-     * @param $video_arr
-     * @param $newpath
+     * 拼接视频(可用)
+     * @param $video_arr     视频数组(必须传相对路径)
+     * @param $newpath       保存地址
      */
     public function  contactVideo($video_arr,$newpath){
         return $this->video->concat($video_arr)->saveFromSameCodecs($newpath, TRUE);
@@ -94,9 +94,9 @@ class Video{
     public function transcodeFormat($newpath,$bite_rate=1000,$audio_bite_rate=100,$audio_channels=2){
         $this->format->setKiloBitrate($bite_rate)->setAudioChannels($audio_channels)->setAudioKiloBitrate($audio_bite_rate);
         $this->format->on('progress', function ($video, $format, $percentage) {
-            echo "$percentage % 进度";
+            //echo "$percentage % 进度";
         });
-        $this->video->save($this->format, $newpath);
+        return $this->video->save($this->format, $newpath);
     }
     /**
      * 视频提取音频(可用)
