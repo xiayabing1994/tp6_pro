@@ -29,6 +29,10 @@ class Test{
     public function image(Image $image){
         dump($image->test('thumb.png','watermark.png','bar.png'));
     }
+
+    /**
+     * 视频处理类相关测试
+     */
     public function video(){
         $thumbpath=ROOT_PATH."/uploads/video/thumb.png";
         $gifpath=ROOT_PATH."/uploads/video/gif.gif";
@@ -37,12 +41,19 @@ class Test{
             ROOT_PATH.'/uploads/video/001.mp4',
             ROOT_PATH.'/uploads/video/002.mp4',
         ];
+        $video_arr=[
+            ROOT_PATH.'./uploads/video/001.mp4',
+            ROOT_PATH.'./uploads/video/002.mp4',
+        ];
+        $contact_video_arr=[
+            './uploads/video/001.mp4',
+            './uploads/video/002.mp4',
+        ];
         $video=new Video($video_arr[0]);
-        dump($video->getVideoInfo($video_arr[0]));
-        dump($video->transcodeFormat(ROOT_PATH."/uploads/video/transcodeFormat.avi",900,80));
+//        dump($video->getVideoInfo($video_arr[0]));
+//        dump($video->transcodeFormat(ROOT_PATH."/uploads/video/transcodeFormat.avi",900,80));
 //        dump($video->tailor(ROOT_PATH."/uploads/video/tailor.mp4",200,300));
-//        dump($video->contactVideo($video_arr,ROOT_PATH."/uploads/video/contact.mp4"));
-//        dump($video->contactVideo($video_arr,ROOT_PATH."/uploads/video/contact.mp4"));
+//        dump($video->contactVideo($contact_video_arr,ROOT_PATH."/uploads/video/contact.mp4"));
 //        dump($video->thumb(ROOT_PATH."/uploads/video/thumb.png",9));
 //        dump($video->transcode(ROOT_PATH."/uploads/video/transcode.wmv",'wmv',544,960));
 //        dump($video->transferAudio(ROOT_PATH."/uploads/video/transferaudio.mp3"));
@@ -54,14 +65,30 @@ class Test{
     }
     public function audio(){
         $audio_arr=[
-            ROOT_PATH.'/uploads/video/001.mp3',
-           ROOT_PATH.'/uploads/video/002.mp3',
+            ROOT_PATH.'/uploads/audio/001.mp3',
+           ROOT_PATH.'/uploads/audio/002.mp3',
+//           ROOT_PATH.'/uploads/audio/transfer.aac',
         ];
-        $newfile =  ROOT_PATH.'/uploads/video/new'.rand(1000,9999).'.mp3';
+        $contact_audio_arr=[
+            './uploads/audio/001.mp3',
+            './uploads/audio/002.mp3',
+//           ROOT_PATH.'/uploads/audio/transfer.aac',
+        ];
         $audio=new Audio($audio_arr[0]);
-//        dump($audio->wavePng(ROOT_PATH.'/uploads/video/nwave.png'));
-        dump($audio->clip($newfile,1,3));
-//        dump($audio->Contact($audio_arr,$newfile));
+//        dump($audio->addMetadata(ROOT_PATH.'/uploads/audio/elements.aac',[
+//            'title'=>'piano of xia',
+//            "artist" => "虾米",
+//            "album" => "第几个2020", //专辑
+//            "composer" => "xiami",   //作曲家
+//            "track" => 1,             //轨道
+//            "year" => 2020,           //年份
+//            "description" => "我的2020专辑",  //描述
+//        ]));
+//        dump($audio->clip(ROOT_PATH.'/uploads/audio/clip.mp3',10,10));
+//        dump($audio->transfer(ROOT_PATH.'/uploads/audio/transfer.aac',300,3));
+//        dump($audio->transfer(ROOT_PATH.'/uploads/audio/transfer.flac',500,2));
+//        dump($audio->transfer(ROOT_PATH.'/uploads/audio/transfer.wav',150,1));
+//        dump($audio->Contact($contact_audio_arr,ROOT_PATH.'/uploads/audio/contact.mp3'));
     }
     public function socket(Socket $socket){
         $socket->getConn();

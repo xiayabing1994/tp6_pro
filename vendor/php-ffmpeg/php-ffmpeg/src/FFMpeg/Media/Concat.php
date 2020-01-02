@@ -129,12 +129,10 @@ class Concat extends AbstractMediaType
 
         fclose($fileStream);
 
-
         $commands = [
             '-f', 'concat', '-safe', '0',
             '-i', $sourcesFile
         ];
-
         // Check if stream copy is activated
         if ($streamCopy) {
             $commands[] = '-c';

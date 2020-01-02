@@ -78,7 +78,10 @@ class Audio extends AbstractStreamableMedia
 
         return $this;
     }
-
+    public function concat($sources) : Concat
+    {
+        return new Concat($sources, $this->driver, $this->ffprobe);
+    }
     /**
      * Returns the final command as a string, useful for debugging purposes.
      *

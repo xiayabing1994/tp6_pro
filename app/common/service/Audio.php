@@ -3,12 +3,17 @@ namespace app\common\service;
 /**
  * Created by Xiami.
  * User: beinianxiaoyao@163.com
- * Desc: 这是文件说明
+ * Desc: 音频服务类
  * Date: 2019/12/22 0022
  * Time: 16:10
  */
 use FFMpeg\FFMpeg;
 use Ratchet\Wamp\Exception;
+use FFMpeg\Format\Audio\Mp3;
+use FFMpeg\Format\Audio\Aac;
+use FFMpeg\Format\Audio\Wav;
+use FFMpeg\Format\Audio\Flac;
+use FFMpeg\Coordinate\TimeCode;
 
 class Audio{
 
@@ -17,36 +22,83 @@ class Audio{
     public function __construct($audiopath){
         $this->handler= FFMpeg::create([
             'ffmpeg.binaries'  => 'C:\Users\Administrator\Desktop\ffmpeg\bin\ffmpeg.exe',
+//            'ffmpeg.binaries'  => 'C:\Users\Administrator\Desktop\ffmpeg\bin\ffplay.exe',
             //'ffmpeg.binaries' => '/usr/local/bin/ffmpeg',
             'ffprobe.binaries' => 'C:\Users\Administrator\Desktop\ffmpeg\bin\ffprobe.exe',
             //'ffprobe.binaries' => '/usr/local/bin/ffprobe',
         ]);
         $this->audio=$this->handler->open($audiopath);
+
     }
-    public function test(){
-        $audio_arr=[
-            ROOT_PATH.'\uploads\video\001.mp3',
-            ROOT_PATH.'/uploads/video/002.mp3',
-        ];
-        $newFile =  ROOT_PATH.'/uploads/video/new.mp3';
-        $audio = $this->handler->open($audio_arr[0]);
-        //1、拼接音频
-        $audio->concat($audio_arr)->saveFromSameCodecs($newFile, TRUE);
-        //2、生成音频波形
-        $waveform = $audio->waveform(640, 120, array('#00FF00'));
-        $waveform->save('waveform.png');//必须保存为 png 格式
-        //3、截取音频
-        $audio->filters()->clip(\FFMpeg\Coordinate\TimeCode::fromSeconds(10));
-        $audio->save(new \FFMpeg\Format\Video\X264('libfdk_aac'), $newFile);
-        //4、音频转换 Flac 为无损压缩格式  setAudioChannels 声道设置，1单声道，2双声道，3立体声    setAudioKiloBitrate 比特率
-        $format = new \FFMpeg\Format\Audio\Flac();
-        $format->on('progress', function ($audio, $format, $percentage) {
+    /**
+     * 合并音频(可用)
+     * @param $audio_arr       音频数组必须传相对路径
+     * @param $newfile         保存路径
+     * @return \FFMpeg\Media\Concat
+     */
+    public function  Contact($audio_arr,$newfile){
+        return $this->audio->concat($audio_arr)->saveFromSameCodecs($newfile, TRUE);
+    }
+
+    /**
+     * 生成音频波谱图(可用)
+     * @param $pngfile         图片路径
+     * @param int $width       图片宽度
+     * @param int $height      图片高度
+     * @param array $color     波谱颜色 ps:暂时没用
+     * @return mixed
+     */
+    public function wavePng($pngfile,$width=800,$height=200,$color=['#00FF00']){
+        $waveform = $this->audio->waveform($width, $height, $color);
+        $waveform->save($pngfile);//必须保存为 png 格式
+        return $pngfile;
+    }
+
+    /**
+     * 音频裁剪(可用)           MP3格式的好像不支持,会调用video类,其他格式可以
+     * @param $newfile        音频保存路径
+     * @param $start          截取开始秒数
+     * @param int $length     截取长度(s)
+     */
+    public function clip($newfile,$start,$length=null){
+        $this->audio->filters()->clip(TimeCode::fromSeconds($start),TimeCode::fromSeconds($length));
+        dump($this->audio);
+        $this->audio->save(new Mp3(), $newfile);
+    }
+
+    /**
+     * 音频格式转化(可用)
+     * @param $newfile            保存路径
+     * @param $audio_bite_rate    音频比特率 kbps
+     * @param int $audio_channel  声道 1单声道 2双声道 3立体声
+     */
+    public function transfer($newfile,$audio_bite_rate,$audio_channel=2){
+        $format=strtolower(pathinfo($newfile, PATHINFO_EXTENSION));
+        switch($format){
+            case 'aac' :
+                $audioModel=new Aac();break;
+            case 'wav' :
+                $audioModel=new Wav();break;
+            case 'flac':
+                $audioModel=new Flac();break;
+            default:
+                $audioModel=new Mp3();
+        }
+        $audioModel->on('progress', function ($audio, $format, $percentage) {
             echo "$percentage % 进度";
         });
-        $format->setAudioChannels(2)->setAudioKiloBitrate(256);
-        $audio->save($format, ROOT_PATH.'/uploads/video/new.flac');
-        //5.音频添加元素  title(标题)，artist(艺术家)，album(专辑)，  artwork(艺术作品)
-        $audio->filters()->addMetadata([
+        $audioModel->setAudioChannels($audio_channel)->setAudioKiloBitrate($audio_bite_rate);
+        $this->audio->save($audioModel, $newfile);
+    }
+
+    /**
+     * 为音频添加元素信息(可用,但测试没啥效果)
+     * @param $newfile
+     * @param $elements
+     * @return bool
+     */
+    public function addMetadata($newfile,$elements){
+        $example_data=[
             "title" => "Test Title",
             "artist" => "Jam00 artist",
             "album" => "Test album", //专辑
@@ -54,20 +106,22 @@ class Audio{
             "track" => 1,             //轨道
             "year" => 2017,           //年份
             "description" => "jam00 test description",  //描述
-        ]);
-        $audio->save(new \FFMpeg\Format\Audio\Mp3, $newFile);
+        ];
+        $format=strtolower(pathinfo($newfile, PATHINFO_EXTENSION));
+        switch($format){
+            case 'aac' :
+                $audioModel=new Aac();break;
+            case 'wav' :
+                $audioModel=new Wav();break;
+            case 'flac':
+                $audioModel=new Flac();break;
+            default:
+                $audioModel=new Mp3();
+        }
 
-    }
-    public function  Contact($audio_arr,$newfile){
-        return $this->audio->concat($audio_arr)->saveFromSameCodecs($newfile, TRUE);
-    }
-    public function wavePng($pngfile){
-        $waveform = $this->audio->waveform(640, 120, array('#00FF00'));
-        $waveform->save($pngfile);//必须保存为 png 格式
-    }
-    public function clip($newfile,$start,$length=0){
-        $this->audio->filters()->clip(\FFMpeg\Coordinate\TimeCode::fromSeconds($start));
-        $this->audio->save(new \FFMpeg\Format\Video\X264('libfdk_aac'), $newfile);
+        $this->audio->filters()->addMetadata($elements);
+        $this->audio->save($audioModel, $newfile);
+        return true;
     }
 
 
