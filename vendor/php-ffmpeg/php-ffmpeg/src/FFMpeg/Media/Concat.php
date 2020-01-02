@@ -105,7 +105,6 @@ class Concat extends AbstractMediaType
         // Create the file which will contain the list of videos
         $fs = FsManager::create();
         $sourcesFile = $fs->createTemporaryFile('ffmpeg-concat');
-
         // Set the content of this file
         $fileStream = @fopen($sourcesFile, 'w');
 
@@ -154,10 +153,11 @@ class Concat extends AbstractMediaType
         try {
             $this->driver->command($commands);
         } catch (ExecutionFailureException $e) {
+            dump($e);
             $this->cleanupTemporaryFile($outputPathfile);
             throw new RuntimeException('Unable to save concatenated video', $e->getCode(), $e);
         } finally {
-            $this->cleanupTemporaryFile($sourcesFile);
+            //$this->cleanupTemporaryFile($sourcesFile);
         }
 
         return $this;

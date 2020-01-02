@@ -273,11 +273,9 @@ class FFProbe
     private function probe($pathfile, $command, $type, $allowJson = true)
     {
         $id = sprintf('%s-%s', $command, $pathfile);
-
         if ($this->cache->has($id)) {
             return $this->cache->get($id);
         }
-
         if (!$this->optionsTester->has($command)) {
             throw new RuntimeException(
                 sprintf(

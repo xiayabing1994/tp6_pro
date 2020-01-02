@@ -46,7 +46,6 @@ class OptionsTester implements OptionsTesterInterface
     public function has(string $optionName) : bool
     {
         $id = sprintf('php-ffmpeg-ffprobe-option-%s', $optionName);
-
         if ($this->cache->has($id)) {
             return $this->cache->get($id);
         }
@@ -70,9 +69,9 @@ class OptionsTester implements OptionsTesterInterface
         if ($this->cache->has(static::HELP_OUTPUT_CACHE_ID)) {
             return $this->cache->get(static::HELP_OUTPUT_CACHE_ID);
         }
-
         try {
             $output = $this->ffprobe->command(['-help', '-loglevel', 'quiet']);
+
         } catch (ExecutionFailureException $e) {
             throw new RuntimeException(
                 'Your FFProbe version is too old and does not support `-help` option, please upgrade.',
